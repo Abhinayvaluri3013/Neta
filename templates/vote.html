@@ -1,0 +1,303 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Cast Your Vote — NETA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    .vote-page { min-height: 100vh; background: var(--paper); padding: 60px 20px; display: flex; flex-direction: column; align-items: center; }
+    .vote-card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 48px; max-width: 520px; width: 100%; box-shadow: 0 8px 40px rgba(0,0,0,0.07); }
+    .vote-logo { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: var(--navy); letter-spacing: 6px; margin-bottom: 4px; }
+    .vote-logo span { color: var(--saffron); }
+    .vote-subtitle { font-size: 12px; color: var(--ink3); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 36px; }
+    .step-indicator { display: flex; gap: 8px; margin-bottom: 36px; }
+    .step-dot { height: 4px; flex: 1; border-radius: 2px; background: var(--border); transition: background .3s; }
+    .step-dot.active { background: var(--saffron); }
+    .step-dot.done   { background: var(--green); }
+    .step-title { font-family: 'Cormorant Garamond', serif; font-size: 24px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+    .step-desc  { font-size: 13px; color: var(--ink3); margin-bottom: 28px; line-height: 1.6; }
+    label { display: block; font-size: 12px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--ink2); margin-bottom: 8px; }
+    input[type="text"], input[type="number"] {
+      width: 100%; padding: 14px 16px; border: 1px solid var(--border);
+      border-radius: 6px; font-size: 16px; font-family: 'DM Sans', sans-serif;
+      color: var(--ink); background: var(--paper); transition: border .2s;
+      letter-spacing: 2px;
+    }
+    input:focus { outline: none; border-color: var(--saffron); background: white; }
+    .btn-primary {
+      width: 100%; padding: 16px; background: var(--saffron); color: white;
+      border: none; border-radius: 6px; font-family: 'Cormorant Garamond', serif;
+      font-size: 18px; font-weight: 600; letter-spacing: 1px; cursor: pointer;
+      margin-top: 24px; transition: all .25s;
+    }
+    .btn-primary:hover { background: var(--saffron-lt); transform: translateY(-1px); }
+    .btn-primary:disabled { background: var(--border); color: var(--ink3); cursor: not-allowed; transform: none; }
+    .alert { padding: 12px 16px; border-radius: 6px; font-size: 13px; margin-top: 16px; }
+    .alert-error   { background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; }
+    .alert-success { background: #F0FDF4; border: 1px solid #BBF7D0; color: #166534; }
+    .fingerprint-area {
+      width: 120px; height: 120px; border-radius: 50%;
+      border: 2px dashed var(--border); margin: 0 auto 20px;
+      display: flex; flex-direction: column; align-items: center; justify-content: center;
+      cursor: pointer; transition: all .3s; font-size: 40px;
+    }
+    .fingerprint-area:hover, .fingerprint-area.scanning { border-color: var(--saffron); background: rgba(255,98,0,0.04); }
+    .fingerprint-area.success { border-color: var(--green); background: rgba(4,106,56,0.06); border-style: solid; }
+    .fp-hint { font-size: 11px; color: var(--ink3); letter-spacing: 1px; text-transform: uppercase; margin-top: 6px; text-align: center; }
+    .candidate-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 8px; }
+    .candidate-btn {
+      padding: 16px 12px; border: 1px solid var(--border); border-radius: 8px;
+      background: white; cursor: pointer; text-align: left; transition: all .2s;
+      font-family: 'DM Sans', sans-serif;
+    }
+    .candidate-btn:hover { border-color: var(--saffron); background: rgba(255,98,0,0.03); }
+    .candidate-btn.selected { border-color: var(--saffron); border-width: 2px; background: rgba(255,98,0,0.05); }
+    .candidate-btn .party { font-size: 10px; letter-spacing: 1px; text-transform: uppercase; color: var(--ink3); }
+    .candidate-btn .name  { font-size: 14px; font-weight: 500; color: var(--ink); margin-top: 4px; }
+    .candidate-btn .symbol { font-size: 24px; margin-bottom: 8px; }
+    .nota-btn { grid-column: 1/-1; }
+    .receipt-box {
+      background: var(--navy); border-radius: 10px; padding: 24px; text-align: center;
+      margin-top: 24px;
+    }
+    .receipt-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.4); margin-bottom: 8px; }
+    .receipt-code  { font-family: monospace; font-size: 20px; color: var(--gold-lt); letter-spacing: 4px; }
+    .voter-info-box { background: var(--paper); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 24px; }
+    .voter-info-name { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--navy); }
+    .voter-info-const { font-size: 12px; color: var(--ink3); letter-spacing: 1px; margin-top: 4px; }
+    #step-panel { display: none; }
+    #step-panel.active { display: block; }
+  </style>
+</head>
+<body>
+
+<!-- Ribbon -->
+<div class="ribbon">
+  <div class="ribbon-left">
+    <div class="ribbon-dot"></div>
+    <span>Election Commission of India — Secure Voting Portal</span>
+    <span id="ribbon-time"></span>
+  </div>
+  <div class="ribbon-right">
+    <a href="/">← Home</a>
+    <a href="#">Help</a>
+  </div>
+</div>
+<div class="tricolor"></div>
+
+<div class="vote-page">
+  <div class="vote-card">
+    <div class="vote-logo">N<span>E</span>TA</div>
+    <div class="vote-subtitle">Secure Biometric Voting</div>
+
+    <!-- Step progress dots -->
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot"        id="dot-2"></div>
+      <div class="step-dot"        id="dot-3"></div>
+      <div class="step-dot"        id="dot-4"></div>
+    </div>
+
+    <!-- ── STEP 1: Aadhaar ── -->
+    <div id="step-1" class="step-panel active">
+      <div class="step-title">Enter Your Aadhaar</div>
+      <div class="step-desc">Your 12-digit Aadhaar number will be matched against the national voter roll. Your details remain confidential.</div>
+      <label for="aadhaar-input">Aadhaar Number</label>
+      <input type="text" id="aadhaar-input" maxlength="12" placeholder="XXXX XXXX XXXX" oninput="formatAadhaar(this)"/>
+      <div id="msg-1" class="alert" style="display:none"></div>
+      <button class="btn-primary" onclick="verifyAadhaar()">Verify Aadhaar →</button>
+    </div>
+
+    <!-- ── STEP 2: Fingerprint ── -->
+    <div id="step-2" class="step-panel" style="display:none">
+      <div class="step-title">Biometric Verification</div>
+      <div class="step-desc">Place your finger on the sensor to confirm your identity. Your biometric is verified — never stored in raw form.</div>
+      <div id="voter-info" class="voter-info-box" style="display:none">
+        <div class="voter-info-name" id="voter-name"></div>
+        <div class="voter-info-const" id="voter-const"></div>
+      </div>
+      <div style="text-align:center">
+        <div class="fingerprint-area" id="fp-area" onclick="simulateScan()">
+          <span id="fp-icon">👆</span>
+          <div class="fp-hint" id="fp-hint">Tap to scan</div>
+        </div>
+      </div>
+      <div id="msg-2" class="alert" style="display:none"></div>
+      <button class="btn-primary" id="fp-btn" onclick="verifyFingerprint()" disabled>Confirm Identity →</button>
+    </div>
+
+    <!-- ── STEP 3: Vote ── -->
+    <div id="step-3" class="step-panel" style="display:none">
+      <div class="step-title">Cast Your Vote</div>
+      <div class="step-desc">Select your candidate. Your choice is encrypted immediately and cannot be traced back to you.</div>
+      <label>Choose Candidate</label>
+      <div class="candidate-grid" id="candidate-grid">
+        <button class="candidate-btn" onclick="selectCandidate(this, 'Ramesh Gupta')">
+          <div class="symbol">🪷</div>
+          <div class="party">BJP</div>
+          <div class="name">Ramesh Gupta</div>
+        </button>
+        <button class="candidate-btn" onclick="selectCandidate(this, 'Sonia Jain')">
+          <div class="symbol">✋</div>
+          <div class="party">INC</div>
+          <div class="name">Sonia Jain</div>
+        </button>
+        <button class="candidate-btn" onclick="selectCandidate(this, 'Arun Yadav')">
+          <div class="symbol">🚲</div>
+          <div class="party">SP</div>
+          <div class="name">Arun Yadav</div>
+        </button>
+        <button class="candidate-btn" onclick="selectCandidate(this, 'Meera Das')">
+          <div class="symbol">🌾</div>
+          <div class="party">TMC</div>
+          <div class="name">Meera Das</div>
+        </button>
+        <button class="candidate-btn nota-btn" onclick="selectCandidate(this, 'NOTA')">
+          <div class="symbol">🚫</div>
+          <div class="party">None of the Above</div>
+          <div class="name">NOTA</div>
+        </button>
+      </div>
+      <div id="msg-3" class="alert" style="display:none"></div>
+      <button class="btn-primary" id="vote-btn" onclick="castVote()" disabled>Confirm & Cast Vote →</button>
+    </div>
+
+    <!-- ── STEP 4: Receipt ── -->
+    <div id="step-4" class="step-panel" style="display:none">
+      <div class="step-title">Vote Recorded ✓</div>
+      <div class="step-desc">Your encrypted vote has been successfully recorded. Your unique receipt is proof of participation — it cannot be used to reveal your choice.</div>
+      <div class="receipt-box">
+        <div class="receipt-label">Your Cryptographic Receipt</div>
+        <div class="receipt-code" id="receipt-code">—</div>
+      </div>
+      <div class="alert alert-success" style="margin-top:20px">
+        🇮🇳 Thank you for participating in Indian democracy. Jai Hind!
+      </div>
+      <button class="btn-primary" onclick="window.location.href='index.html'" style="background:var(--navy)">Return to Home</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  let selectedCandidate = null;
+  let fpScanned = false;
+
+  /* ── Aadhaar formatting ── */
+  function formatAadhaar(input) {
+    input.value = input.value.replace(/\D/g, '').slice(0, 12);
+  }
+
+  /* ── Show/hide steps ── */
+  function goToStep(n) {
+    document.querySelectorAll('.step-panel').forEach(p => p.style.display = 'none');
+    document.getElementById('step-' + n).style.display = 'block';
+    // Update dots
+    for (let i = 1; i <= 4; i++) {
+      const dot = document.getElementById('dot-' + i);
+      dot.className = 'step-dot' + (i < n ? ' done' : i === n ? ' active' : '');
+    }
+  }
+
+  /* ── STEP 1: Verify Aadhaar ── */
+  async function verifyAadhaar() {
+    const aadhaar = document.getElementById('aadhaar-input').value.trim();
+    showMsg(1, '', '');
+    if (aadhaar.length !== 12) { showMsg(1, 'Please enter a valid 12-digit Aadhaar number.', 'error'); return; }
+
+    try {
+      const res = await fetch('/api/verify-aadhaar', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ aadhaar })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('voter-name').textContent = data.name;
+        document.getElementById('voter-const').textContent = '📍 ' + data.constituency;
+        document.getElementById('voter-info').style.display = 'block';
+        goToStep(2);
+      } else {
+        showMsg(1, data.message, 'error');
+      }
+    } catch {
+      showMsg(1, 'Network error. Please try again.', 'error');
+    }
+  }
+
+  /* ── STEP 2a: Simulate fingerprint scan (expo demo) ── */
+  function simulateScan() {
+    if (fpScanned) return;
+    const area = document.getElementById('fp-area');
+    const icon = document.getElementById('fp-icon');
+    const hint = document.getElementById('fp-hint');
+    area.classList.add('scanning');
+    icon.textContent = '⏳';
+    hint.textContent = 'Scanning...';
+    setTimeout(() => {
+      area.classList.remove('scanning');
+      area.classList.add('success');
+      icon.textContent = '✅';
+      hint.textContent = 'Fingerprint matched';
+      document.getElementById('fp-btn').disabled = false;
+      fpScanned = true;
+    }, 1800);
+  }
+
+  /* ── STEP 2b: Send fingerprint result to server ── */
+  async function verifyFingerprint() {
+    try {
+      const res = await fetch('/api/verify-fingerprint', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ fp_confirmed: true })
+      });
+      const data = await res.json();
+      if (data.success) { goToStep(3); }
+      else { showMsg(2, data.message, 'error'); }
+    } catch {
+      showMsg(2, 'Network error. Please try again.', 'error');
+    }
+  }
+
+  /* ── STEP 3: Select candidate ── */
+  function selectCandidate(btn, name) {
+    document.querySelectorAll('.candidate-btn').forEach(b => b.classList.remove('selected'));
+    btn.classList.add('selected');
+    selectedCandidate = name;
+    document.getElementById('vote-btn').disabled = false;
+  }
+
+  /* ── STEP 3: Cast vote ── */
+  async function castVote() {
+    if (!selectedCandidate) return;
+    showMsg(3, '', '');
+    try {
+      const res = await fetch('/api/cast-vote', {
+        method: 'POST', headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ candidate: selectedCandidate })
+      });
+      const data = await res.json();
+      if (data.success) {
+        document.getElementById('receipt-code').textContent = data.receipt;
+        goToStep(4);
+      } else {
+        showMsg(3, data.message, 'error');
+      }
+    } catch {
+      showMsg(3, 'Network error. Please try again.', 'error');
+    }
+  }
+
+  function showMsg(step, text, type) {
+    const el = document.getElementById('msg-' + step);
+    if (!text) { el.style.display = 'none'; return; }
+    el.className = 'alert alert-' + type;
+    el.textContent = text;
+    el.style.display = 'block';
+  }
+</script>
+</body>
+</html>

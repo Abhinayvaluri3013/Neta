@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Register Face — NETA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body { background: var(--paper); }
+    .reg-page { min-height: 100vh; padding: 60px 20px; display: flex; flex-direction: column; align-items: center; }
+    .reg-card { background: white; border: 1px solid var(--border); border-radius: 16px; padding: 48px; max-width: 560px; width: 100%; box-shadow: 0 8px 40px rgba(0,0,0,0.07); }
+    .reg-logo { font-family: 'Cormorant Garamond', serif; font-size: 28px; font-weight: 700; color: var(--navy); letter-spacing: 6px; margin-bottom: 4px; }
+    .reg-logo span { color: var(--saffron); }
+    .reg-subtitle { font-size: 12px; color: var(--ink3); letter-spacing: 2px; text-transform: uppercase; margin-bottom: 32px; }
+    .step-indicator { display: flex; gap: 8px; margin-bottom: 36px; }
+    .step-dot { height: 4px; flex: 1; border-radius: 2px; background: var(--border); transition: background .3s; }
+    .step-dot.active { background: var(--saffron); }
+    .step-dot.done   { background: var(--green); }
+    .reg-title { font-family: 'Cormorant Garamond', serif; font-size: 26px; font-weight: 600; color: var(--navy); margin-bottom: 8px; }
+    .reg-desc  { font-size: 13px; color: var(--ink3); margin-bottom: 28px; line-height: 1.6; }
+    label { display: block; font-size: 12px; font-weight: 500; letter-spacing: 1px; text-transform: uppercase; color: var(--ink2); margin-bottom: 8px; }
+    input[type="text"] {
+      width: 100%; padding: 14px 16px; border: 1px solid var(--border);
+      border-radius: 6px; font-size: 16px; font-family: 'DM Sans', sans-serif;
+      color: var(--ink); background: var(--paper); transition: border .2s; letter-spacing: 2px;
+    }
+    input:focus { outline: none; border-color: var(--saffron); background: white; }
+    .btn-primary {
+      width: 100%; padding: 16px; background: var(--saffron); color: white;
+      border: none; border-radius: 6px; font-family: 'Cormorant Garamond', serif;
+      font-size: 18px; font-weight: 600; letter-spacing: 1px; cursor: pointer;
+      margin-top: 20px; transition: all .25s;
+    }
+    .btn-primary:hover { background: var(--saffron-lt); transform: translateY(-1px); }
+    .btn-primary:disabled { background: var(--border); color: var(--ink3); cursor: not-allowed; transform: none; }
+    .btn-secondary {
+      width: 100%; padding: 14px; background: transparent; color: var(--navy);
+      border: 1px solid var(--border); border-radius: 6px;
+      font-family: 'Cormorant Garamond', serif; font-size: 16px; font-weight: 600;
+      letter-spacing: 1px; cursor: pointer; margin-top: 10px; transition: all .25s;
+    }
+    .btn-secondary:hover { border-color: var(--navy); background: var(--paper); }
+    .alert { padding: 12px 16px; border-radius: 6px; font-size: 13px; margin-top: 16px; }
+    .alert-error   { background: #FEF2F2; border: 1px solid #FECACA; color: #991B1B; }
+    .alert-success { background: #F0FDF4; border: 1px solid #BBF7D0; color: #166534; }
+    .alert-info    { background: #EFF6FF; border: 1px solid #BFDBFE; color: #1E40AF; }
+    .camera-wrap {
+      position: relative; width: 100%; border-radius: 12px; overflow: hidden;
+      border: 2px solid var(--border); background: #000; margin: 16px 0; display: none;
+    }
+    .camera-wrap.active { display: block; }
+    #video { width: 100%; display: block; transform: scaleX(-1); }
+    .camera-overlay { position: absolute; inset: 0; display: flex; align-items: center; justify-content: center; pointer-events: none; }
+    .face-guide { width: 200px; height: 260px; border-radius: 50%; border: 3px solid rgba(255,98,0,0.8); box-shadow: 0 0 0 2000px rgba(0,0,0,0.4); }
+    .camera-label { position: absolute; bottom: 10px; left: 0; right: 0; text-align: center; font-size: 11px; color: white; letter-spacing: 1px; text-transform: uppercase; padding: 6px; background: rgba(0,0,0,0.4); }
+    #captured-preview { width: 100%; border-radius: 12px; border: 2px solid var(--green); display: none; margin: 16px 0; transform: scaleX(-1); }
+    .voter-box { background: var(--paper); border: 1px solid var(--border); border-radius: 8px; padding: 16px; margin-bottom: 20px; display: none; }
+    .voter-name  { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: var(--navy); }
+    .voter-const { font-size: 12px; color: var(--ink3); letter-spacing: 1px; margin-top: 4px; }
+    canvas { display: none; }
+  </style>
+</head>
+<body>
+
+<div class="ribbon">
+  <div class="ribbon-left">
+    <div class="ribbon-dot"></div>
+    <span>NETA — Voter Face Registration</span>
+    <span id="ribbon-time"></span>
+  </div>
+  <div class="ribbon-right">
+    <a href="/">← Home</a>
+    <a href="/vote">Vote Now</a>
+  </div>
+</div>
+<div class="tricolor"></div>
+
+<div class="reg-page">
+  <div class="reg-card">
+    <div class="reg-logo">N<span>E</span>TA</div>
+    <div class="reg-subtitle">Face Registration Portal</div>
+
+    <div class="step-indicator">
+      <div class="step-dot active" id="dot-1"></div>
+      <div class="step-dot"        id="dot-2"></div>
+      <div class="step-dot"        id="dot-3"></div>
+    </div>
+
+    <!-- STEP 1: Aadhaar -->
+    <div id="step-1">
+      <div class="reg-title">Enter Your Aadhaar</div>
+      <div class="reg-desc">Register your face once before voting day. This takes less than 30 seconds.</div>
+      <label>Aadhaar Number</label>
+      <input type="text" id="aadhaar-reg" maxlength="12" placeholder="XXXX XXXX XXXX"
+             oninput="this.value=this.value.replace(/\D/g,'').slice(0,12)"/>
+      <div id="msg-1" class="alert" style="display:none"></div>
+      <button class="btn-primary" onclick="lookupAadhaar()">Continue →</button>
+    </div>
+
+    <!-- STEP 2: Webcam -->
+    <div id="step-2" style="display:none">
+      <div class="reg-title">📷 Register Your Face</div>
+      <div class="reg-desc">Position your face inside the oval and click Capture Photo.</div>
+
+      <div class="voter-box" id="voter-box">
+        <div class="voter-name"  id="voter-name-reg"></div>
+        <div class="voter-const" id="voter-const-reg"></div>
+      </div>
+
+      <div class="camera-wrap active" id="camera-wrap">
+        <video id="video" autoplay playsinline></video>
+        <div class="camera-overlay">
+          <div class="face-guide"></div>
+        </div>
+        <div class="camera-label">Position your face in the oval</div>
+      </div>
+
+      <img id="captured-preview" alt="Captured face"/>
+      <canvas id="canvas"></canvas>
+
+      <div id="msg-2" class="alert" style="display:none"></div>
+      <button class="btn-primary"   id="capture-btn"  onclick="capturePhoto()">📸 Capture Photo</button>
+      <button class="btn-secondary" id="retake-btn"   onclick="retakePhoto()"  style="display:none">↩ Retake Photo</button>
+      <button class="btn-primary"   id="register-btn" onclick="registerFace()" style="display:none;background:var(--green)">✅ Save & Register Face</button>
+    </div>
+
+    <!-- STEP 3: Success -->
+    <div id="step-3" style="display:none">
+      <div class="reg-title">Registration Complete ✓</div>
+      <div class="reg-desc">Your face has been registered. You can now vote!</div>
+      <div class="alert alert-success" id="success-msg"></div>
+      <button class="btn-primary" onclick="window.location.href='/vote'" style="margin-top:20px">
+        🗳️ Go to Voting Portal →
+      </button>
+      <button class="btn-secondary" onclick="resetForm()">Register Another Voter</button>
+    </div>
+
+  </div>
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+  let stream = null;
+  let capturedImg = null;
+  let aadhaar = null;
+
+  function goToStep(n) {
+    ['step-1','step-2','step-3'].forEach((id,i) => {
+      document.getElementById(id).style.display = (i+1===n) ? 'block' : 'none';
+    });
+    for (let i=1; i<=3; i++) {
+      const dot = document.getElementById('dot-'+i);
+      dot.className = 'step-dot' + (i<n?' done': i===n?' active':'');
+    }
+  }
+
+  async function lookupAadhaar() {
+    aadhaar = document.getElementById('aadhaar-reg').value.trim();
+    showMsg(1,'','');
+    if (aadhaar.length !== 12) { showMsg(1,'Enter a valid 12-digit Aadhaar number.','error'); return; }
+    goToStep(2);
+    startCamera();
+    document.getElementById('voter-box').style.display = 'block';
+    document.getElementById('voter-name-reg').textContent = 'Aadhaar: ' + aadhaar;
+    document.getElementById('voter-const-reg').textContent = 'Ready to register face';
+  }
+
+  async function startCamera() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { width:640, height:480, facingMode:'user' } });
+      document.getElementById('video').srcObject = stream;
+    } catch(e) {
+      showMsg(2, 'Camera access denied. Please allow camera and refresh.', 'error');
+    }
+  }
+
+  function capturePhoto() {
+    const video  = document.getElementById('video');
+    const canvas = document.getElementById('canvas');
+    canvas.width  = video.videoWidth  || 640;
+    canvas.height = video.videoHeight || 480;
+    const ctx = canvas.getContext('2d');
+    ctx.translate(canvas.width, 0);
+    ctx.scale(-1, 1);
+    ctx.drawImage(video, 0, 0);
+    capturedImg = canvas.toDataURL('image/jpeg', 0.9);
+
+    document.getElementById('captured-preview').src = capturedImg;
+    document.getElementById('captured-preview').style.display = 'block';
+    document.getElementById('camera-wrap').style.display = 'none';
+    document.getElementById('capture-btn').style.display  = 'none';
+    document.getElementById('retake-btn').style.display   = 'block';
+    document.getElementById('register-btn').style.display = 'block';
+    showMsg(2, 'Photo captured! Click "Save & Register Face" to continue.', 'info');
+  }
+
+  function retakePhoto() {
+    capturedImg = null;
+    document.getElementById('captured-preview').style.display = 'none';
+    document.getElementById('camera-wrap').style.display = 'block';
+    document.getElementById('capture-btn').style.display  = 'block';
+    document.getElementById('retake-btn').style.display   = 'none';
+    document.getElementById('register-btn').style.display = 'none';
+    showMsg(2,'','');
+  }
+
+  async function registerFace() {
+    if (!capturedImg) { showMsg(2,'No photo captured.','error'); return; }
+    showMsg(2,'Registering... please wait.','info');
+    document.getElementById('register-btn').disabled = true;
+
+    try {
+      const res  = await fetch('/api/register-face', {
+        method: 'POST', headers: {'Content-Type':'application/json'},
+        body: JSON.stringify({ aadhaar, image: capturedImg })
+      });
+      const data = await res.json();
+      if (data.success) {
+        stopCamera();
+        document.getElementById('success-msg').textContent = '✅ ' + data.message;
+        goToStep(3);
+      } else {
+        showMsg(2, data.message, 'error');
+        document.getElementById('register-btn').disabled = false;
+      }
+    } catch {
+      showMsg(2,'Network error. Please try again.','error');
+      document.getElementById('register-btn').disabled = false;
+    }
+  }
+
+  function stopCamera() {
+    if (stream) { stream.getTracks().forEach(t => t.stop()); stream = null; }
+  }
+
+  function resetForm() {
+    stopCamera(); capturedImg = null; aadhaar = null;
+    document.getElementById('aadhaar-reg').value = '';
+    document.getElementById('captured-preview').style.display = 'none';
+    document.getElementById('camera-wrap').style.display = 'none';
+    document.getElementById('capture-btn').style.display  = 'block';
+    document.getElementById('retake-btn').style.display   = 'none';
+    document.getElementById('register-btn').style.display = 'none';
+    document.getElementById('voter-box').style.display    = 'none';
+    showMsg(1,'',''); showMsg(2,'','');
+    goToStep(1);
+  }
+
+  function showMsg(step, text, type) {
+    const el = document.getElementById('msg-'+step);
+    if (!text) { el.style.display='none'; return; }
+    el.className = 'alert alert-'+type;
+    el.textContent = text;
+    el.style.display = 'block';
+  }
+</script>
+</body>
+</html>
+```
+
+---
+
+After saving, go to:
+```
+http://localhost:5000/register

@@ -1,0 +1,376 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NETA — National Electronic Transparent Authentication</title>
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&family=Tiro+Devanagari+Hindi&display=swap" rel="stylesheet">
+
+  <!-- Main Stylesheet -->
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+
+<!-- ─── TOP RIBBON ─── -->
+<div class="ribbon">
+  <div class="ribbon-left">
+    <div class="ribbon-dot"></div>
+    <span>Election Commission of India — Official Portal</span>
+    <span id="ribbon-time"></span>
+  </div>
+  <div class="ribbon-right">
+    <a href="#">Help</a>
+    <a href="#">हिंदी</a>
+    <a href="#">Accessibility</a>
+    <a href="#">Contact</a>
+  </div>
+</div>
+<div class="tricolor"></div>
+
+<!-- ─── HEADER ─── -->
+<header>
+  <div class="header-inner">
+
+    <!-- Indian Emblem -->
+    <div class="emblem-wrap">
+      <svg class="emblem-svg" viewBox="0 0 100 120" xmlns="http://www.w3.org/2000/svg">
+        <rect x="15" y="95" width="70" height="8" rx="2" fill="#C8922A"/>
+        <rect x="20" y="103" width="60" height="4" rx="1" fill="#A07018"/>
+        <rect x="22" y="87" width="56" height="8" rx="2" fill="#C8922A"/>
+        <ellipse cx="30" cy="72" rx="10" ry="14" fill="#C8922A"/>
+        <circle cx="26" cy="58" r="8" fill="#C8922A"/>
+        <circle cx="26" cy="57" r="10" fill="none" stroke="#A07018" stroke-width="2"/>
+        <ellipse cx="70" cy="72" rx="10" ry="14" fill="#C8922A"/>
+        <circle cx="74" cy="58" r="8" fill="#C8922A"/>
+        <circle cx="74" cy="57" r="10" fill="none" stroke="#A07018" stroke-width="2"/>
+        <ellipse cx="50" cy="68" rx="11" ry="16" fill="#C8922A"/>
+        <circle cx="50" cy="52" r="10" fill="#C8922A"/>
+        <circle cx="50" cy="51" r="12" fill="none" stroke="#A07018" stroke-width="2.5"/>
+        <circle cx="47" cy="50" r="1.2" fill="#002868"/>
+        <circle cx="53" cy="50" r="1.2" fill="#002868"/>
+        <circle cx="50" cy="91" r="4" fill="none" stroke="#002868" stroke-width="1.2"/>
+        <circle cx="50" cy="91" r="1" fill="#002868"/>
+        <line x1="50" y1="87" x2="50" y2="95" stroke="#002868" stroke-width="0.6"/>
+        <line x1="46" y1="88" x2="54" y2="94" stroke="#002868" stroke-width="0.6"/>
+        <line x1="54" y1="88" x2="46" y2="94" stroke="#002868" stroke-width="0.6"/>
+        <line x1="46" y1="91" x2="54" y2="91" stroke="#002868" stroke-width="0.6"/>
+        <text x="50" y="115" font-family="serif" font-size="6.5" font-weight="bold" fill="#002868" text-anchor="middle" letter-spacing="1">सत्यमेव जयते</text>
+      </svg>
+    </div>
+
+    <div class="brand">
+      <div class="brand-name">N<span>E</span>TA</div>
+      <div class="brand-tagline">National Electronic Transparent Authentication</div>
+    </div>
+
+    <nav>
+      <a href="#" class="active">Home</a>
+      <a href="#how">How it Works</a>
+      <a href="#security">Security</a>
+      <a href="/vote">Vote Now</a>
+    </nav>
+
+    <div class="eci-block">
+      <div class="eci-title">Election Commission of India</div>
+      <div class="eci-sub">निर्वाचन आयोग भारत</div>
+    </div>
+
+  </div>
+</header>
+
+<!-- ─── NOTICE TICKER ─── -->
+<div class="notice-band">
+  <div class="notice-inner">
+    <div class="notice-label">📢 Notices</div>
+    <div class="notice-ticker">
+      <div class="ticker-items" id="ticker">
+        <span>●</span> Lok Sabha General Election 2024 — Biometric Voting Portal Now Active &nbsp;&nbsp;&nbsp;
+        <span>●</span> Voters must complete Aadhaar-linked biometric registration before casting vote &nbsp;&nbsp;&nbsp;
+        <span>●</span> Last date to register: 30 March 2024 &nbsp;&nbsp;&nbsp;
+        <span>●</span> Helpline: 1950 (Toll Free) &nbsp;&nbsp;&nbsp;
+        <span>●</span> System implements end-to-end encryption and zero-knowledge vote recording &nbsp;&nbsp;&nbsp;
+        <span>●</span> Lok Sabha General Election 2024 — Biometric Voting Portal Now Active &nbsp;&nbsp;&nbsp;
+        <span>●</span> Voters must complete Aadhaar-linked biometric registration before casting vote &nbsp;&nbsp;&nbsp;
+        <span>●</span> Last date to register: 30 March 2024 &nbsp;&nbsp;&nbsp;
+        <span>●</span> Helpline: 1950 (Toll Free) &nbsp;&nbsp;&nbsp;
+        <span>●</span> System implements end-to-end encryption and zero-knowledge vote recording &nbsp;&nbsp;&nbsp;
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ─── HERO ─── -->
+<section class="hero">
+  <div class="hero-bg"></div>
+  <div class="hero-glow"></div>
+  <div class="hero-glow-green"></div>
+
+  <!-- Decorative Ashoka Wheel -->
+  <svg class="hero-wheel" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+    <circle cx="100" cy="100" r="90" fill="none" stroke="white" stroke-width="4"/>
+    <circle cx="100" cy="100" r="12" fill="none" stroke="white" stroke-width="3"/>
+    <circle cx="100" cy="100" r="4" fill="white"/>
+    <g stroke="white" stroke-width="2">
+      <line x1="100" y1="12" x2="100" y2="88"/> <line x1="100" y1="112" x2="100" y2="188"/>
+      <line x1="12" y1="100" x2="88" y2="100"/> <line x1="112" y1="100" x2="188" y2="100"/>
+      <line x1="33" y1="33" x2="91" y2="91"/>   <line x1="109" y1="109" x2="167" y2="167"/>
+      <line x1="167" y1="33" x2="109" y2="91"/> <line x1="91" y1="109" x2="33" y2="167"/>
+      <line x1="20" y1="65" x2="87" y2="96"/>   <line x1="113" y1="104" x2="180" y2="135"/>
+      <line x1="20" y1="135" x2="87" y2="104"/> <line x1="113" y1="96" x2="180" y2="65"/>
+      <line x1="65" y1="20" x2="96" y2="87"/>   <line x1="104" y1="113" x2="135" y2="180"/>
+      <line x1="135" y1="20" x2="104" y2="87"/> <line x1="96" y1="113" x2="65" y2="180"/>
+    </g>
+  </svg>
+
+  <div class="hero-inner">
+    <div class="hero-left">
+      <div class="hero-eyebrow">Empowering Every Citizen</div>
+      <h1 class="hero-h1">
+        Democracy<br>
+        <span class="accent">Secured by</span><br>
+        Biometrics
+      </h1>
+      <div class="hero-hindi">मतदान — एक अधिकार, एक शक्ति</div>
+      <p class="hero-desc">
+        NETA brings the ballot to every eligible Indian citizen through
+        Aadhaar-linked biometric authentication — ensuring your identity
+        is verified, your vote is secret, and fraud is impossible.
+      </p>
+      <div class="hero-actions">
+        <a href="/vote" class="btn-vote">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+            <path d="M9 12l2 2 4-4M7.835 4.697a3.42 3.42 0 001.946-.806 3.42 3.42 0 014.438 0 3.42 3.42 0 001.946.806 3.42 3.42 0 013.138 3.138 3.42 3.42 0 00.806 1.946 3.42 3.42 0 010 4.438 3.42 3.42 0 00-.806 1.946 3.42 3.42 0 01-3.138 3.138 3.42 3.42 0 00-1.946.806 3.42 3.42 0 01-4.438 0 3.42 3.42 0 00-1.946-.806 3.42 3.42 0 01-3.138-3.138 3.42 3.42 0 00-.806-1.946 3.42 3.42 0 010-4.438 3.42 3.42 0 00.806-1.946 3.42 3.42 0 013.138-3.138z"/>
+          </svg>
+          Cast Your Vote
+        </a>
+        <a href="#how" class="btn-learn">How it Works ↓</a>
+      </div>
+
+      <div class="hero-stats">
+        <div>
+          <div class="hero-stat-val">96.8 Cr</div>
+          <div class="hero-stat-lbl">Registered Voters</div>
+        </div>
+        <div>
+          <div class="hero-stat-val">543</div>
+          <div class="hero-stat-lbl">Constituencies</div>
+        </div>
+        <div>
+          <div class="hero-stat-val">256-bit</div>
+          <div class="hero-stat-lbl">AES Encryption</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Right Info Card -->
+    <div class="hero-card">
+      <div class="hero-card-title">Voting Process</div>
+      <div class="hero-step">
+        <div class="step-circle">1</div>
+        <div>
+          <div class="step-text-title">Enter Aadhaar Number</div>
+          <div class="step-text-sub">Your 12-digit Aadhaar is matched against the national voter roll</div>
+        </div>
+      </div>
+      <div class="hero-step">
+        <div class="step-circle">2</div>
+        <div>
+          <div class="step-text-title">Biometric Verification</div>
+          <div class="step-text-sub">Fingerprint scan confirms your physical identity in real-time</div>
+        </div>
+      </div>
+      <div class="hero-step">
+        <div class="step-circle">3</div>
+        <div>
+          <div class="step-text-title">Cast Your Ballot</div>
+          <div class="step-text-sub">Select your candidate — your choice is completely confidential</div>
+        </div>
+      </div>
+      <div class="hero-step">
+        <div class="step-circle">4</div>
+        <div>
+          <div class="step-text-title">Encrypted Receipt</div>
+          <div class="step-text-sub">A cryptographic proof confirms your vote was recorded</div>
+        </div>
+      </div>
+      <div class="election-badge">
+        <div class="badge-dot"></div>
+        Lok Sabha Election 2024 — Active
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FEATURES ─── -->
+<section class="features-band">
+  <div class="section-inner">
+    <div class="section-eyebrow">Why NETA</div>
+    <div class="section-heading">Built on <em>Trust</em>, Designed for <em>India</em></div>
+    <div class="features-grid">
+      <div class="feature-card fade-up">
+        <div class="feature-icon">🔐</div>
+        <div class="feature-title">Biometric Identity</div>
+        <div class="feature-desc">Every voter is verified using their Aadhaar-linked fingerprint. No impersonation. No proxy voting. One person, one vote — guaranteed.</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon">🗳️</div>
+        <div class="feature-title">Secret Ballot</div>
+        <div class="feature-desc">Your vote is cryptographically separated from your identity. Even system administrators cannot link who you are to what you voted.</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon">⛓️</div>
+        <div class="feature-title">Tamper-Proof Ledger</div>
+        <div class="feature-desc">Every vote is stored with an integrity hash. Any modification is immediately detectable, ensuring the final count is mathematically verifiable.</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon">🏠</div>
+        <div class="feature-title">Vote from Anywhere</div>
+        <div class="feature-desc">Citizens in remote areas, the elderly, and differently-abled voters can participate from any registered device — eliminating booth travel barriers.</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon">📋</div>
+        <div class="feature-title">Full Audit Trail</div>
+        <div class="feature-desc">Every system action — login, verification, vote cast — is logged with timestamp and IP. Identity actions are auditable; vote choices never are.</div>
+      </div>
+      <div class="feature-card fade-up">
+        <div class="feature-icon">⚡</div>
+        <div class="feature-title">Real-Time Results</div>
+        <div class="feature-desc">Live tallying as polls close. No counting delays. Election Commission officials see accurate, certified results the moment voting ends.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── HOW IT WORKS ─── -->
+<section class="how-section" id="how">
+  <div class="section-inner">
+    <div class="section-eyebrow">The Process</div>
+    <div class="section-heading">Four Steps to Your <em>Vote</em></div>
+    <div class="how-track">
+      <div class="how-step">
+        <div class="how-num">01</div>
+        <div class="how-step-title">Aadhaar Lookup</div>
+        <div class="how-step-desc">Enter your 12-digit Aadhaar. The system verifies it against the encrypted national voter roll within milliseconds.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">02</div>
+        <div class="how-step-title">Fingerprint Scan</div>
+        <div class="how-step-desc">Place your finger on the sensor. Your biometric template is matched — confirming you are physically present and authorised.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">03</div>
+        <div class="how-step-title">Select Candidate</div>
+        <div class="how-step-desc">View your constituency's ballot. Choose your candidate — or NOTA. Your selection is encrypted the moment you confirm.</div>
+      </div>
+      <div class="how-step">
+        <div class="how-num">04</div>
+        <div class="how-step-title">Vote Recorded</div>
+        <div class="how-step-desc">Your encrypted vote is stored. A unique cryptographic receipt is issued. You cannot vote again — and no one can change your vote.</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── INTEGRITY SECTION ─── -->
+<section class="integrity-section" id="security">
+  <div class="section-inner">
+    <div class="integrity-grid">
+      <div class="integrity-visual">
+        <div class="integrity-items">
+          <div style="font-family:'Cormorant Garamond',serif;font-size:16px;font-weight:600;color:rgba(255,255,255,0.5);letter-spacing:2px;text-transform:uppercase;margin-bottom:24px">System Status</div>
+          <div class="int-row"><div class="int-icon">🔒</div><div class="int-label">Encryption</div><div class="int-value">AES-256 Active</div></div>
+          <div class="int-row"><div class="int-icon">👆</div><div class="int-label">Biometric Engine</div><div class="int-value">Online</div></div>
+          <div class="int-row"><div class="int-icon">🗄️</div><div class="int-label">Voter Database</div><div class="int-value">Synced</div></div>
+          <div class="int-row"><div class="int-icon">🛡️</div><div class="int-label">Fraud Detection</div><div class="int-value">Active</div></div>
+          <div class="int-row"><div class="int-icon">📡</div><div class="int-label">Audit Logger</div><div class="int-value">Recording</div></div>
+          <div class="int-row"><div class="int-icon">⚖️</div><div class="int-label">ECI Oversight</div><div class="int-value">Connected</div></div>
+          <div style="margin-top:24px;padding:14px;background:rgba(7,162,84,0.1);border:1px solid rgba(7,162,84,0.2);border-radius:8px;font-size:13px;color:rgba(255,255,255,0.6);text-align:center">
+            All systems operational — <span style="color:#07A254">Polling Active</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="integrity-text">
+        <div class="section-eyebrow">Security Architecture</div>
+        <div class="section-heading">Zero Trust.<br><em>Total Integrity.</em></div>
+        <p class="integrity-body">
+          NETA is designed on the principle that no single component — not the server,
+          not the database, not even the administrator — should ever be trusted implicitly.
+          Every action is verified, every record is cryptographically signed.
+        </p>
+        <ul class="integrity-points">
+          <li>Identity and vote are stored in separate, isolated databases with no foreign key link</li>
+          <li>Each vote generates a unique SHA-256 hash — your verifiable proof of participation</li>
+          <li>Atomic database transactions prevent partial writes or race conditions</li>
+          <li>All biometric data is hashed and never stored in plain form</li>
+          <li>Session tokens are invalidated immediately after vote is cast</li>
+          <li>Full audit log captures every system event — without revealing vote choices</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ─── FOOTER ─── -->
+<footer>
+  <div class="footer-inner">
+    <div class="footer-tricolor"></div>
+    <div class="footer-top">
+      <div>
+        <div class="footer-brand-name">N<span>E</span>TA</div>
+        <p class="footer-brand-desc">
+          National Electronic Transparent Authentication — a prototype biometric voting system
+          developed as a demonstration of secure, accessible, and fraud-proof digital democracy for India.
+        </p>
+        <div style="margin-top:16px;font-size:11px;letter-spacing:1px;color:rgba(255,255,255,0.25)">
+          DEVELOPED UNDER THE SUPERVISION OF THE<br>ELECTION COMMISSION OF INDIA
+        </div>
+      </div>
+      <div class="footer-col">
+        <h4>Voters</h4>
+        <ul>
+          <li><a href="/vote">Cast Vote</a></li>
+          <li><a href="#">Check Registration</a></li>
+          <li><a href="#">Find Constituency</a></li>
+          <li><a href="#">Download Voter ID</a></li>
+          <li><a href="#">Helpline: 1950</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>System</h4>
+        <ul>
+          <li><a href="#how">How it Works</a></li>
+          <li><a href="#security">Security</a></li>
+          <li><a href="#">Privacy Policy</a></li>
+          <li><a href="#">Accessibility</a></li>
+          <li><a href="/admin">Admin Panel</a></li>
+        </ul>
+      </div>
+      <div class="footer-col">
+        <h4>Commission</h4>
+        <ul>
+          <li><a href="#">About ECI</a></li>
+          <li><a href="#">Election Schedule</a></li>
+          <li><a href="#">Press Releases</a></li>
+          <li><a href="#">Model Code</a></li>
+          <li><a href="#">eci.gov.in ↗</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <div class="footer-govt-note">
+        <span>☸</span>
+        <span>© 2024 Election Commission of India. Government of India. All rights reserved.</span>
+      </div>
+      <div style="font-size:11px;color:rgba(255,255,255,0.2)">NETA v1.0 — Prototype System</div>
+    </div>
+  </div>
+</footer>
+
+<!-- Main JavaScript -->
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8"/>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Admin Panel — NETA</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600;700&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+  <style>
+    body { background: #0a0e1a; color: rgba(255,255,255,0.8); }
+    .admin-header {
+      background: rgba(255,255,255,0.04); border-bottom: 1px solid rgba(255,255,255,0.08);
+      padding: 16px 40px; display: flex; justify-content: space-between; align-items: center;
+    }
+    .admin-logo { font-family: 'Cormorant Garamond', serif; font-size: 22px; font-weight: 700; color: white; letter-spacing: 4px; }
+    .admin-logo span { color: var(--saffron); }
+    .admin-badge { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: var(--green-lt); border: 1px solid rgba(7,162,84,0.3); padding: 4px 10px; border-radius: 99px; }
+    .admin-body { max-width: 1100px; margin: 0 auto; padding: 40px 20px; }
+    .stats-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: 16px; margin-bottom: 32px; }
+    .stat-card { background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.08); border-radius: 10px; padding: 24px; }
+    .stat-label { font-size: 10px; letter-spacing: 2px; text-transform: uppercase; color: rgba(255,255,255,0.35); margin-bottom: 8px; }
+    .stat-val { font-family: 'Cormorant Garamond', serif; font-size: 36px; font-weight: 700; color: white; line-height: 1; }
+    .stat-sub { font-size: 12px; color: var(--green-lt); margin-top: 6px; }
+    .panel { background: rgba(255,255,255,0.04); border: 1px solid rgba(255,255,255,0.07); border-radius: 10px; padding: 28px; margin-bottom: 24px; }
+    .panel-title { font-family: 'Cormorant Garamond', serif; font-size: 20px; font-weight: 600; color: rgba(255,255,255,0.7); margin-bottom: 20px; letter-spacing: 1px; }
+    .bar-row { display: flex; align-items: center; gap: 14px; margin-bottom: 14px; }
+    .bar-name { font-size: 13px; color: rgba(255,255,255,0.8); min-width: 130px; }
+    .bar-track { flex: 1; height: 28px; background: rgba(255,255,255,0.05); border-radius: 4px; overflow: hidden; }
+    .bar-fill { height: 100%; background: var(--saffron); border-radius: 4px; transition: width 1s ease; display: flex; align-items: center; padding-left: 10px; font-size: 12px; font-weight: 500; color: white; min-width: 40px; }
+    .bar-count { font-size: 13px; color: rgba(255,255,255,0.4); min-width: 60px; text-align: right; }
+    .log-table { width: 100%; border-collapse: collapse; font-size: 12px; }
+    .log-table th { text-align: left; padding: 8px 12px; color: rgba(255,255,255,0.3); letter-spacing: 1px; text-transform: uppercase; border-bottom: 1px solid rgba(255,255,255,0.06); }
+    .log-table td { padding: 10px 12px; border-bottom: 1px solid rgba(255,255,255,0.04); color: rgba(255,255,255,0.6); font-family: monospace; }
+    .log-table tr:hover td { background: rgba(255,255,255,0.03); }
+    .event-badge { display: inline-block; padding: 2px 8px; border-radius: 4px; font-size: 10px; letter-spacing: 0.5px; }
+    .event-VOTE_CAST     { background: rgba(7,162,84,0.15); color: #07A254; }
+    .event-AADHAAR_LOOKUP { background: rgba(255,98,0,0.12); color: var(--saffron-lt); }
+    .event-FINGERPRINT_SCAN { background: rgba(65,105,200,0.15); color: #7AA0E0; }
+    .event-FINGERPRINT_MISMATCH { background: rgba(200,50,50,0.15); color: #F08080; }
+    .refresh-btn {
+      background: transparent; border: 1px solid rgba(255,255,255,0.15);
+      color: rgba(255,255,255,0.5); padding: 8px 16px; border-radius: 6px;
+      font-size: 12px; cursor: pointer; transition: all .2s; letter-spacing: 1px;
+    }
+    .refresh-btn:hover { border-color: var(--saffron); color: var(--saffron-lt); }
+    .live-dot { display: inline-block; width: 8px; height: 8px; border-radius: 50%; background: var(--green-lt); animation: blink 1.5s infinite; margin-right: 6px; }
+    .turnout-bar { height: 8px; background: rgba(255,255,255,0.06); border-radius: 4px; margin-top: 12px; overflow: hidden; }
+    .turnout-fill { height: 100%; background: linear-gradient(to right, var(--saffron), var(--green-lt)); border-radius: 4px; transition: width 1s ease; }
+  </style>
+</head>
+<body>
+
+<div class="ribbon">
+  <div class="ribbon-left">
+    <div class="ribbon-dot"></div>
+    <span>NETA — Election Commission Admin Panel</span>
+    <span id="ribbon-time"></span>
+  </div>
+  <div class="ribbon-right">
+    <a href="/">← Home</a>
+    <a href="/vote">Voting Portal</a>
+  </div>
+</div>
+<div class="tricolor"></div>
+
+<div class="admin-header">
+  <div>
+    <div class="admin-logo">N<span>E</span>TA <span style="font-size:14px;color:rgba(255,255,255,0.3);letter-spacing:2px">ADMIN</span></div>
+    <div style="font-size:11px;color:rgba(255,255,255,0.25);margin-top:2px;letter-spacing:1px">ELECTION COMMISSION CONTROL PANEL</div>
+  </div>
+  <div style="display:flex;align-items:center;gap:14px">
+    <span class="admin-badge"><span class="live-dot"></span>Live</span>
+    <button class="refresh-btn" onclick="loadStats()">↻ Refresh</button>
+  </div>
+</div>
+
+<div class="admin-body">
+
+  <!-- Stats -->
+  <div class="stats-grid">
+    <div class="stat-card">
+      <div class="stat-label">Total Voters</div>
+      <div class="stat-val" id="s-total">—</div>
+      <div class="stat-sub">Registered</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Votes Cast</div>
+      <div class="stat-val" id="s-voted">—</div>
+      <div class="stat-sub" id="s-turnout">Turnout</div>
+      <div class="turnout-bar"><div class="turnout-fill" id="s-bar" style="width:0%"></div></div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Ballots Recorded</div>
+      <div class="stat-val" id="s-votes">—</div>
+      <div class="stat-sub">Anonymised</div>
+    </div>
+    <div class="stat-card">
+      <div class="stat-label">Audit Events</div>
+      <div class="stat-val" id="s-audit">—</div>
+      <div class="stat-sub">All logged</div>
+    </div>
+  </div>
+
+  <!-- Results bars -->
+  <div class="panel">
+    <div class="panel-title" style="display:flex;justify-content:space-between;align-items:center">
+      Live Results
+      <span style="font-size:11px;color:rgba(255,255,255,0.3);font-family:'DM Sans',sans-serif;font-weight:400">Anonymous vote counts only</span>
+    </div>
+    <div id="results-container">
+      <div style="color:rgba(255,255,255,0.25);font-size:13px">Loading results...</div>
+    </div>
+  </div>
+
+  <!-- Audit log -->
+  <div class="panel">
+    <div class="panel-title">Recent Audit Log</div>
+    <table class="log-table">
+      <thead>
+        <tr>
+          <th>Event</th>
+          <th>Voter (masked)</th>
+          <th>IP</th>
+          <th>Timestamp</th>
+        </tr>
+      </thead>
+      <tbody id="audit-body">
+        <tr><td colspan="4" style="color:rgba(255,255,255,0.2)">Loading...</td></tr>
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
+<script>
+async function loadStats() {
+  try {
+    const res = await fetch('/api/admin/stats');
+    const d   = await res.json();
+
+    document.getElementById('s-total').textContent = d.total_voters;
+    document.getElementById('s-voted').textContent = d.voted;
+    document.getElementById('s-votes').textContent = d.total_votes;
+    document.getElementById('s-audit').textContent = d.audit_entries;
+    document.getElementById('s-turnout').textContent = d.turnout_pct + '% Turnout';
+    document.getElementById('s-bar').style.width = d.turnout_pct + '%';
+
+    // Audit log
+    const tbody = document.getElementById('audit-body');
+    tbody.innerHTML = d.recent_log.map(r => `
+      <tr>
+        <td><span class="event-badge event-${r.event}">${r.event.replace(/_/g,' ')}</span></td>
+        <td>${r.aadhaar_hint || '—'}</td>
+        <td>${r.ip || '—'}</td>
+        <td>${r.timestamp.slice(0,19).replace('T',' ')}</td>
+      </tr>
+    `).join('') || '<tr><td colspan="4" style="color:rgba(255,255,255,0.2)">No events yet</td></tr>';
+
+  } catch (e) { console.error(e); }
+
+  try {
+    const res = await fetch('/api/results');
+    const d   = await res.json();
+    const max = d.results.length ? Math.max(...d.results.map(r => r.votes)) : 1;
+
+    document.getElementById('results-container').innerHTML = d.results.length
+      ? d.results.map(r => `
+          <div class="bar-row">
+            <div class="bar-name">${r.candidate}</div>
+            <div class="bar-track"><div class="bar-fill" style="width:${Math.round(r.votes/max*100)}%">${r.votes}</div></div>
+            <div class="bar-count">${d.total_votes ? Math.round(r.votes/d.total_votes*100) : 0}%</div>
+          </div>
+        `).join('')
+      : '<div style="color:rgba(255,255,255,0.25);font-size:13px">No votes cast yet</div>';
+  } catch(e) { console.error(e); }
+}
+
+loadStats();
+setInterval(loadStats, 5000);   // Auto-refresh every 5 seconds
+</script>
+</body>
+</html>
